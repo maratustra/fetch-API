@@ -1,25 +1,36 @@
 const getData = () => {
-  getUserData()
-    .then(user => sendData(user));
+  let data = getUserData();
+  sendData(data);
 };
 
 const getUserData = () => {
-  return fetch('db.json')
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.log(error));
+  let requestData = new XMLHttpRequest();
+  requestData.open('GET', 'db.json');
+  requestData.responseType = 'json';
+  requestData.send();
+
+  return requestData;
 };
 
-const sendData = (user) => {
-  fetch('https://jsonplaceholder.typicode.com/posts', {
-    method: 'POST',
-    body: JSON.stringify(user),
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8'
-    },
-  })
-    .then(() => console.log("Data sent"))
-    .catch(error => console.log(error));
+const sendData = (data) => {
+  let receivedData = JSON.stringify(data);
+  let sendRequest = new XMLHttpRequest();
+
+  sendRequest.upload.onprogress = e => {
+    console.log(`Sent ${e.loaded} of ${e.total}`);
+  };
+
+  sendRequest.onloadend = () => {
+    if (sendRequest.status === 201) {
+      console.log('Data sent');
+    } else {
+      console.log('Error');
+    }
+  };
+
+  sendRequest.open('POST', 'https://jsonplaceholder.typicode.com/posts');
+  sendRequest.setRequestHeader('Content-Type', 'application/json');
+  sendRequest.send(receivedData);
 };
 
 
