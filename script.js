@@ -22,4 +22,5 @@ const sendData = (user) => {
     .catch(error => console.log(error));
 };
 
+
 getData();
